@@ -1,0 +1,347 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <!--   <link rel="stylesheet" title="Standard" href="http://kolbermoorer.bplaced.net/BuyButton/Test/ContentFlow/styles.css" type="text/css" media="screen" /> -->
+
+  <script type="text/javascript" src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
+  <script type="text/javascript" src="http://kolbermoorer.bplaced.net/BuyButton/Coverflip/jquery-ui-1.7.2.custom.js"></script>
+  <script type="text/javascript" src="http://kolbermoorer.bplaced.net/BuyButton/Coverflip/jquery.jcoverflip.js"></script>
+    <script language="JavaScript" type="text/javascript" src="http://kolbermoorer.bplaced.net/BuyButton/Test/ContentFlow/contentflow.js"></script>
+    
+     <style type='text/css'>
+     
+     #sideBar{
+       position: fixed; /*replace absolute */
+		float:right;
+		top: 60px;
+		right: 7px;
+		background-image:url(http://kolbermoorer.bplaced.net/BuyButton/images/background.gif);
+		background-position:top left;
+		background-repeat:repeat;
+		
+     }
+     
+     #sideBarContents{
+    width:270px;
+    height:500px;
+    
+    padding:10px 10px 10px 10px;
+    /*border:1px solid #A52A2A; */
+    background-image:url(http://kolbermoorer.bplaced.net/BuyButton/images/background1.gif);
+		background-position:top right;
+		background-repeat:repeat;
+    
+	}
+	
+	#sideBarTab{
+		float:left;
+
+	}
+	
+#sideBarTab img{
+		border:0px solid #FFFFFF; 
+	}
+	
+	img { 
+	border: none; 
+
+	}
+     
+     #contentFlow{
+    position:absolute;
+	width:300px;
+	height:150px;
+	/* border:1px solid #A52A2A; */
+		
+		
+	}
+	
+	#spotifySmall {
+	position: relative;
+	top:160px;
+	}
+	
+	#spotifyBig {
+	position: relative;
+	top:20px;
+	}
+	
+h1 {
+    text-align: center;
+    text-decoration: underline;
+    color: white;
+    font-size: 1.5em;
+}
+h2 {
+	text-align: center;
+    margin-top: 2.5em;
+    color: white;
+    font-size: 1.1em;
+}
+	
+	#comments {
+  float:left;
+  width:450px;
+}
+
+
+#comment {
+  position: absolute;
+  top: 0;
+  margin-top: 20px;
+  border-top: 1px solid purple;
+  padding-top: 19px;
+}
+
+#comments ol li {
+  border-top: 1px solid purple;
+}
+
+#comments ol li:first-child {
+  border-top: 0;
+}
+
+     </style>
+    
+    
+    
+    
+    <script type="text/javascript">
+
+    var isExtended = 0;
+    var cf = new ContentFlow('contentFlow',{visibleItems:2, maxItemHeight:70,scaleFactorPortrait:1.5});
+	cf._init();
+    
+    $(window).load(function(){
+    	$(function () {
+    		
+    		//var par = $('#sideBarContents');
+    		//$(par).hide();
+    	})
+
+
+    });//]]>  
+    
+
+    function extendButton(){
+		
+    	if(isExtended == 0){
+    		$("#slideTabIMG").attr('src','http://kolbermoorer.bplaced.net/BuyButton/slide-button-active.gif');
+    		$("#sideBarContents").show(1500);
+    		isExtended = 1;
+    		
+    	}
+    	else {
+    		$("#slideTabIMG").attr('src','http://kolbermoorer.bplaced.net/BuyButton/slide-button.gif');
+    		$("#sideBarContents").hide(1500);
+    		isExtended = 0;
+    	}
+
+    	
+    }
+
+    function whatDoISee(){
+			var text = '';
+    	   // check for visible divs with class 'check'   
+    	    $("div").each(function(i){
+    	        var pos = $(this).offset(),
+    	            wX = $(window).scrollLeft(), wY = $(window).scrollTop(),
+    	            wH = $(window).height(), wW = $(window).width(),
+    	            oH = $(this).outerHeight(), oW = $(this).outerWidth();
+    	                
+    	        // check the edges
+    	        if (pos.left >= wX && pos.top >= wY && 
+    	            oW + pos.left <= wX + wW && oH + pos.top <= wY + wH ) {
+    	            alert('Div #' + $(this).attr('id') + ' is fully visible');
+					text = $(this).html();
+    	            //performSearch(text);
+    	            //return false; //exit script for testing
+    	        }	
+    	        else
+    	        if (((pos.left <= wX && pos.left + oW > wX) ||
+    	              (pos.left >= wX && pos.left <= wX + wW)) &&
+    	            ((pos.top <= wY && pos.top + oH > wY)   ||
+    	            (pos.top  >= wY && pos.top  <= wY + wH)))
+    	            alert('Div #' + $(this).attr('id') + ' is partially visible');
+    	        else
+    	            alert('Div #' + $(this).attr('id') + ' is not visible');
+    	    });        
+
+    }
+    
+    </script>
+    
+    <!-- Ab hier java script code um den Künstler aus Text zu ziehen -->
+    
+    <script type="text/javascript">
+
+
+		function urlEncode(obj) {
+			var s = '';
+			for (var key in obj) {
+				s += encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]) + '&';
+			}
+			if (s.length > 0) {
+				s = s.substr(0, s.length - 1); // Delete last '&'
+			}
+
+			return (s);
+		}
+			
+			function performSearch(artistText) {
+				
+				var params = {
+						api_key: 'RWZJEZBAUMSKMPM4O',
+						format: 'json',
+						text: artistText,
+						bucket: 'songs', 
+						results: 20
+					};
+					var params = urlEncode(params);
+				alert(params);
+				$.ajax({
+				    url: 'http://developer.echonest.com/api/v4/artist/extract?' + params,
+				    type: 'GET',
+				    dataType: 'json',
+				    cache: true,
+
+				    success: teamprojectSearchResults,
+				    error: function(xhr, status, errorThrown) {
+				        alert("networking error: " + errorThrown + '\n' + status + '\n' + xhr.statusText);
+				    }
+				});
+			}
+
+			function teamprojectSearchResults(arg) {
+				var results = arg.response.artists;
+
+				for (var i = 0; i < results.length; i++) {
+					var artist = results[i].name;
+					
+
+				$.ajax({
+				    url: 'http://ws.spotify.com/search/1/album.json?q=' + artist,
+				    type: 'GET',
+				    dataType: 'json',
+				    cache: true,
+
+				    success: albumSearchResults,
+				    error: function(xhr, status, errorThrown) {
+				        alert("networking error: " + errorThrown + '\n' + status + '\n' + xhr.statusText);
+				    }
+				});
+				}
+				
+			}	
+
+			function albumSearchResults(arg) {
+				
+				
+				
+			}	
+		</script>
+</head>
+<body>
+
+<input type='button' onclick="whatDoISee();" style='position:fixed; top:0px;right:0px; width:200px; z-index:200' value='What do I see?'>
+
+<div id="comments">
+      <ol>
+        <li>
+          <div class="comment" id="c1"> 
+            <p>Pop can be a tough old game sometimes. <a href="http://www.guardian.co.uk/music/little-boots">Little Boots</a>, aka Victoria Hesketh, may have topped the BBC Sound of 2009 poll and enjoyed both a top five album (Hands) and single (the RedOne-produced <a href="http://www.youtube.com/watch?v=McdqerXrwXE">Remedy</a>), but even these successes couldn't stop her being dropped by Atlantic. According to Hesketh, the label was constantly putting her with various songwriters to chase a hit and then changing its mind about what it wanted. This resulted in a handful of songs written with a myriad of different pop songwriters, including Jeppe Laursen (who co-wrote Born This Way), Rick Nowels (Madonna, Robyn) and Ariel Rechtshaid (Charli XCX, Sky Ferreira). Once Hesketh and the label parted ways, however, she realised she was left with a crop of songs she loved, but confused about which musical direction the album should go in. So in came DFA co-founder and producer Tim Goldsworthy to oversee the album's production and the result is the excellent Nocturnes – an album that mixes Hesketh's way with a catchy melody and her love of disco and featherlight dance pop. While she may not be chasing huge commercial success any more – the album's early singles were either given away free or labelled as buzz tracks – she's still interested in making music videos, which is nice because the one for current single Broken Record – premiered here – features a roller disco, some glittery ticker tape and a bit when she sings "In my dreams you belong to me" that makes it seem really dream-like.<br /><br />• Broken Record is out now. Nocturnes is out via On Repeat on 5 May.</p>
+    
+          </div>
+        </li>
+        <li>
+          <div class="comment" id="c2">
+
+            <p> We wrote about Sykur back in <a href="http://www.guardian.co.uk/music/musicblog/2011/jun/22/sykur-shed-those-tears">2011</a>, when there were only three of them, they'd yet to release anything official outside of their native Iceland, and they hadn't signed a deal with Wall of Sound (home to their musical heroes, Röyksopp). Two years later and they've added an extra member (singer Agnes, who is described as possessing "sneering Courtney Love attitude and Donna Summer disco-fabulousness") and are about to release their debut international release – the excellent Mesopotamia EP, premiered here. Opening with the the effervescent fizz of Messy Hair and the buoyant synthpop of Curling – which features the excellent call to arms chant of "we're going to start a fire with our synthesisers" – it's clear they're quite big fans of undeniable pop melodies. As if to temper that assumption slightly, they then bring everything down for the sluggish Battlestar, but luckily slip on their dancing shoes again for the squelchy Feit and the closing instrumental, Hvítvín, which as you well know means white wine in Icelandic. <br /><br />Mesopotamia is out on 29 April on Wall Of Sound and can be pre-ordered <a href="https://itunes.apple.com/gb/album/mesopotamia-ep/id609044785">here</a>.</p>
+    </div>
+        </li>
+        <li>
+          <div class="comment" id="c3">  
+            <p> Some people worry about when we'll run out of oil. A rather smaller proportion of us worry about when we'll run out of discoverable, deep-end thrills like this. There is just no way in the world items like Donald Hooker's 40-year-old privately pressed LP should even exist as a thing – it more than likely only ran to about 99 copies in its original format, so how the hell did even one of those survive to create these new digital and analogue versions decades later? Connecticut-based Hooker – a tall, slim hippy with a history of substance abuse – was much given to wearing the sort of austere robe he sports on the sleeve, a fairly outré move even then. In early 1972 he hired a gang of local scene musicians to flesh out his wonderful songs and after a few brief rehearsals the band began recording. As soon as they were done they split – some never even heard the finished album, and what a treat they missed. Hooker's arrangements are truly beautiful; a simple, swinging pop song like Weather Girl exists somewhere between the Doors and Curtis Mayfield, whereas The Bible ("If they're knocking the Bible, be sure they are bent/ Just see and you'll understand the book is heaven sent") has the propulsive drive of a pained George Harrison ballad crushed up against some of Neil Young's freeform, string-banging joy. Then there's The Sea, with its rolling religious allegories and the remarkable Free which marries a growling hard rock throb to a vampirically groovy synth line. Hooker's masterpiece is Forge Your Own Chains, which is part conga-led, lounge-funk soul and part, questing psychedelic dream. To think this entirely individual worldview would have once languished, unloved, in a series of under-the-racks cutout bins. And how much more magic like this is there out there?</p><p>Reading on mobile? <a href="http://open.spotify.com/album/1uYc9AXGcBmBO1NkAY57RE">Listen to the album here</a></p>
+    
+          </div>
+        </li>
+        <li>
+          <div class="comment" id="c4">
+            <p>Out Cold is the side-project of Simon Aldred, who you may or may not know as the frontman of <a href="http://www.guardian.co.uk/music/indie" title="More from guardian.co.uk on Indie">indie</a> pop also-rans, Cherry Ghost. While that band remain on hiatus following the release of 2010's Beneath This Burning Shoreline, Aldred's not only shifted his focus but also his sound. Out Cold's forthcoming debut album, Invasion of Love – recorded with Metronomy and NZCA Lines producer, Ash Workman – takes in everything from Motown to house to electropop; anything, in fact, but acoustic strumalongs. "The pattern of strumming a guitar felt really flat, I didn't want to make another miserable northern record," Aldred explains. "The last album, I was plucking quotes from Chekhov and film noir, so I wanted to give myself a little break. I could have easily made an acoustic troubadour-style album, and I had half that written, but it shouldn't be that easy." </p><p>Lyrically and in terms of its celebratory mood, the album was also influenced by his coming out as gay. "Invasion has a negative connotation, but the album is mostly about embracing relationships and love, with a longing that's now tinged with reality, of being gay and singing from that perspective." One of the most direct love songs is the excellent, <a href="https://w.soundcloud.com/player/?url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F88403735%3Fsecret_token%3Ds-H2R1h&amp;color=ed7392&amp;auto_play=false&amp;show_artwork=true">All I Want</a> – premiered here. Over a slow-burn intro of backwards synths and distant guitar riffs, the song's subtle urgency slowly builds to take in opulent strings, a ticking beat and Aldred's yearning vocals. While the song offers itself up slowly, the very NSFW video – directed by <a href="http://jamieharley.tumblr.com">Jamie Harley</a> – is slightly more direct, featuring barely dressed models rolling around on beds while filmed through a 1960s filter.</p><p>• All I Want is out now on Heavenly Recordings, with the album due in August.</p>
+   </div>
+        </li>
+        <li>
+          <div class="comment" id="c5">
+
+            Oddball Detroit four-piece Jamaican Queens make music that tries to shine a light on the grimier recesses of life. The last single to be taken from their self-released debut album, Wormfood (available to download for free from <a href="http://jamaicanqueens.bandcamp.com/album/wormfood">their Bandcamp</a>), was a song called <a href="http://www.interviewmagazine.com/music/exclusive-song-premiere-caitlin-jamaican-queens">Caitlin</a>, which frontman Ryan Spencer wrote as a gift to a friend whose grandmother had just been brutally murdered. While the lyrics are obviously quite sombre, musically it reflects the band's penchant for <a href="http://www.guardian.co.uk/music/hip-hop" title="More from guardian.co.uk on Hip-hop">hip-hop</a> beats, odd time signatures and a disconcerting way with a pop melody that makes even the weirdest subject matter seem hummable. </p><p>Their inability to concentrate on one genre might stem from the fact that Spencer is quite the fan of mind-bending narcotics, as his excellent band bio confirms. "I try to escape reality as much as possible through the use of psychedelics or MDMA," he explains. "This will probably affect my psyche very much later in life. I've been trying to see a therapist lately, but since my car got stolen it's hard to get to a doctor. When my most recent relationship ended, I decided to focus all of my attention on music, because relationships just give me anxiety." Spencer also lists his biggest lyrical inspiration as <a href="http://www.guardian.co.uk/music/morrissey">Morrissey</a>, while his favourite music is "<a href="http://www.guardian.co.uk/music/rap" title="More from guardian.co.uk on Rap">rap</a> music", which also explains a lot. On their latest single, Can't Say No To Annie, Spencer croons joyously about inviting someone to "lick my earlobes if you want to, but leave your shirt on" over big stomping drum beats, squelching synths and growling backing vocals that undercut the day-glo dreaminess like a thunderstorm. </p><p>You can download Wormfood for free  <a href="http://jamaicanqueens.bandcamp.com/album/wormfood">here</a>.</p>
+    
+          </div>
+        </li>
+        <li>
+          <div class="comment" id="c6">
+            <p>The bad news is that Neon Neon's second album is the sound of a band treading water. The good news, however, is that when it comes to <a href="http://www.guardian.co.uk/music/gruff-rhys" title="More from guardian.co.uk on Gruff Rhys">Gruff Rhys</a> and Boom Bip's synth project, treading water means a stylish yet bonkers conceptual pop album about an overlooked historical figure that comes packed with tunes. </p><p>Where their debut album, Stainless Style, was an ode to the life of DeLorean Motor Company founder John DeLorean, Praxis Makes Perfect is inspired by maverick Italian publisher and leftwing activist Giangiacomo Feltrinelli. Yep, if this is treading water then it's water we're quite happy to let be trodden on. </p><span class="inline embed embed-media">
+	</span><p>It's basically the most tuneful history lesson you'll ever have: over sleek, synth-laden tunes we're introduced to a man who published The Leopard (the biggest selling novel in Italian history), had connections with the likes of Fidel Castro and Che Guevara and who died in mysterious circumstances in 1972. </p><p>Have a listen using the player above and let us know your thoughts in the comments below.</p>
+    
+          </div>
+        </li>
+        
+      </ol>
+    </div>
+
+
+<div style="float: right; width: 70%;">
+<div id="sideBar">  
+
+<a href="#" id="sideBarTab"><img src="http://kolbermoorer.bplaced.net/BuyButton/images/slide-button.gif" id="slideTabIMG" onclick="extendButton();" alt="sideBar" title="sideBar" /></a>
+	
+ 
+<div id="sideBarContents">
+    <!-- ===== FLOW ===== -->
+    <div id="contentFlow" class="ContentFlow">
+        <!-- should be place before flow so that contained images will be loaded first -->
+        <div class="loadIndicator"><div class="indicator"></div></div>
+
+        <div class="flow">
+
+            <div class="item" href="#">
+                <img class="content" src="http://kolbermoorer.bplaced.net/BuyButton/Coverflip/1.png"/></a>
+                <div class="caption"><h1>Coldplay</h1><p> <h2> Viva la Vida</h2></p></div>
+            </div>
+            <div class="item">
+                <img class="content" src="http://kolbermoorer.bplaced.net/BuyButton/Coverflip/2.png"/>
+                <div class="caption"><h1>Die Toten Hosen </h1> <p>  <h2>Balast der Republik</h2></p></div>
+            </div>
+            <div class="item">
+                <img class="content" src="http://kolbermoorer.bplaced.net/BuyButton/Coverflip/3.png"/>
+                <div class="caption"><h1>Depeche Mode </h1><p>  <h2>Delta Machine</h2></p></div>
+            </div>
+            <div class="item">
+                <img class="content" src="http://kolbermoorer.bplaced.net/BuyButton/Coverflip/4.png"/>
+                <div class="caption"><h1>Passenger </h1><p>  <h2>All the little lights</h2></p></div>
+            </div>
+
+            <div class="item">
+                <img class="content" src="http://kolbermoorer.bplaced.net/BuyButton/Coverflip/5.png"/>
+                <div class="caption"><h1>Justin Timberlake </h1><p>  <h2>The 20/20 Experience</h2></p></div>
+            </div>
+            
+
+        </div>
+        <div class="globalCaption"></div>
+       
+    </div>
+    
+    
+    
+    <div id="spotifyBig">
+    <iframe src="https://embed.spotify.com/?uri=spotify:user:1170661114:playlist:4lF05qCXsw7AZrsh7rSYbz" width="300" height="330" frameborder="0" allowtransparency="true"></iframe>
+    
+    </div>
+    
+    
+ </div>  
+ </div>
+
+</body>
+</html>
