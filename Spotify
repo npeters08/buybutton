@@ -1,0 +1,96 @@
+<html> <head>
+  	<title>Teamproject - Music Search in javascript</title>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script> 		
+		<style type="text/css">
+		.songs-search-result {
+			border: 1px solid Black;
+			margin-bottom: 5px;
+			padding: 5px;
+		}
+
+		.songs-search-result  .label{
+			display: inline-block;
+			width: 200px;
+		}
+		</style>
+		
+		<script type="text/javascript">
+						
+			function performSearch() {
+
+				var searchString = encodeURIComponent(jQuery('#search-keyword').val());
+				
+				$.ajax({
+				    url: 'http://ws.spotify.com/search/1/track.json?q=' + searchString, // The Mummy Returns -> Various Artists is an Artist -> No Link
+				    type: 'GET',
+				    dataType: 'json',
+				    cache: true,
+
+				    success: teamprojectSearchResults,
+				    error: function(xhr, status, errorThrown) {
+				        alert("networking error: " + errorThrown + '\n' + status + '\n' + xhr.statusText);
+				    }
+				});
+			}
+
+			function teamprojectSearchResults(arg) {
+				var results = arg.tracks;
+				var html = '';
+				for (var i = 0; i < results.length; i++) {
+					var item = results[i];
+                                        var isrcTemp = item['external-ids']; // temp var is needed because of the hyphen in combination with the array [0]
+                                        var artistHref = item.artists[0].href
+                                        if(typeof artistHref === 'undefined') { //If no artist page exists
+                                             artistHref = ' ';
+                                        }
+                                             else {
+                                             artistHref = 'http://open.spotify.com/artist/' + artistHref.substr(artistHref.lastIndexOf(":") + 1,artistHref.length)
+                                        }
+
+					
+					var obj = {
+						track_name: item.name,
+						track_url: item.href,
+						artist_name: item.artists[0].name,
+						artist_uri: item.artists[0].href,
+						artist_url: artistHref,
+						item_isrc: isrcTemp[0].id,
+						item_availability: item.album.availability.territories
+					};
+					results[i] = obj;
+
+					html += '<div class="songs-search-result">';
+
+					html += '<span class="label">Track:</span>{0}&nbsp;&nbsp;'.replace("{0}", obj.track_name);
+					html += '<a href="{0}" target="_blank">Stream</a>&nbsp;&nbsp;'.replace("{0}", obj.track_url);
+                                
+                                if (artistHref === ' ') {
+                                html += '<br><span class="label">Artist:</span>{1}<br />'.replace("{1}", obj.artist_name);
+                                }
+                                else
+                                {
+
+			        html += '<br><span class="label">Artist:</span><a href="{0}" target="_blank">{1}</a><br />'.replace("{0}", obj.artist_url).replace("{1}", obj.artist_name);
+                                }
+			        html += '<span class="label">Territories:</span>{0}<br />'.replace("{0}", obj.item_availability);
+					html += '<span class="label">ISRC Code:</span>{0}<br />'.replace("{0}", obj.item_isrc);
+
+					html += '</div>';
+
+					
+				}
+				jQuery('#spotify-results').html(html);
+			}		
+		</script>
+	</head>
+
+	<body>
+		
+		Universal Buy Button Search:<br />
+		<input type="text" id="search-keyword" title="Enter Search Keyword" style="width: 176px" />
+		<br />
+		<input type="button" value="Music Search" onclick="performSearch();" style="width: 171px" >
+		
+		<div id="spotify-results">
+		</div></body>
+	</html>
