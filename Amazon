@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>Music Search Amazon API</title>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="stylesheet" type="text/css" href="../Users/Nikita/Documents/Meine%20Websites/demos.css"> 
+</head>
+<body>
+
+<?php
+$secret_access_key = "YslakK4rxakbkp7eVj5Uqa1nswZVP3y8vyWukZ2G";
+$access_key_id     = "AKIAINN55TK52KZTNPYA";
+$associate_id      = "buybutton09-21";
+
+
+if ($_GET) {
+
+  $SearchIndex = $_GET['SearchIndex'];//product category to search (predefined)
+  $Keywords    = $_GET['Keywords']; //title, artist etc.  
+  $ItemPage    = $_GET['ItemPage']; //if itempage is not included, the first page is returned; up to ten items are returned on a page
+
+  $input = array('Ä','ä','Ö','ö','Ü','ü','ß','<','>','(',')','{','}','[',']','/','\\',' '); 
+  $output = array('Ae','ae','Oe','oe','Ue','ue','ss','no','nie','nicht','nein','na','nae','nee','nu','nn','mm','+');
+  $umlautade = str_replace($input,$output,$Keywords);
+
+  $SearchIndex = preg_replace("/[^a-zA-Z]/", "no", $SearchIndex);//characters in searchindex that are not congruent are removed      
+  $ItemPage    = preg_replace("/[^0-9]/", "1", $ItemPage);	      
+}
+?>
+
+<form name="Search" action="<?php echo basename($_SERVER["PHP_SELF"]);?>" method="get" accept-charset="iso-8859-1">
+
+&nbsp; Amazon Search:<br>
+
+<input type="text" name="Keywords" value="" size="30">
+<input type="hidden" name="ItemPage" value="1"><br>
+<input type="submit" value="Search">
+</form>
+
+<?php
+
+print "\t<hr style=\"color: #FDFCFB; background-color: #FDFCFB\">\n";
+
+
+/* add timestamp -> encode searchindex and umlautda -> define parameters -> 
+sort URL parameters -> construct the string to sign -> sign the request -> 
+encode (Base64) the signature ->  make it URL safe*/
+
+$time         = gmdate("Y-m-d\TH:i:s\Z");
+$timestamp    = urlencode($time); //urlencode to pass variables to the next page
+
+$SearchIndex  = urlencode($SearchIndex);
+$umlautade    = urlencode($umlautade);
+
+$params        = "AWSAccessKeyId" ."=".  $access_key_id       ."&".
+                 "AssociateTag"   ."=".  $associate_id        ."&".
+                 "ItemPage"       ."=".  $ItemPage            ."&".
+                 "Keywords"       ."=".  $umlautade           ."&".
+                 "Operation"      ."=". "ItemSearch"          ."&".
+                 "ResponseGroup"  ."=". "Medium"              ."&".
+                 "SearchIndex"    ."=".  "Music"   		      ."&".
+                 "Service"        ."=". "AWSECommerceService" ."&".
+                 "Timestamp"      ."=".  $timestamp           ."&".
+                 "Version"        ."=". "2010-11-01"; 
+
+	
+        $stringsignr = "GET\n"."ecs.amazonaws.de"."\n"."/onca/xml"."\n".$params;
+		
+		$signature1  = base64_encode(hash_hmac("sha256", $stringsignr, $secret_access_key, True));
+
+        $signature2  = urlencode($signature1);
+
+$data = file_get_contents("http://ecs.amazonaws.de/onca/xml?".$params."&Signature=".$signature2);
+		
+
+//load XML-file as string
+
+$response = simplexml_load_string($data); 
+
+
+//start "print" of table
+
+    echo "\n\t<table border=\"0\" ".$tableweite." ".$cellspacg.">\n"; 
+
+
+foreach ($response->Items->Item as $movie) {
+
+    echo "\t<tr><td align=\"center\" style=\"".$zelleprig." border-bottom: 1px solid rgb(255,255,255)\">\n";  
+
+//picture with hyperlink to Amazon's webpage
+
+   if ($movie->MediumImage->URL){ 
+       echo ("\t<a href=\"".$movie->DetailPageURL."\" ".$tabla."><img src=\"".$movie->MediumImage->URL."\" 
+       border=\"0\" alt=\"Cover\"></a></td>\n");
+
+   } else { echo 'no picture available.';
+   }
+
+
+   echo "\t<td align=\"center\" style=\"".$zelleleft." border-bottom: 1px solid rgb(255,255,255)\">\n";
+
+//title of products with hyperlink to Amazon's webpage
+
+   echo ("\t<a href=\"".$movie->DetailPageURL."\" ".$tabla." class=\"braungold\">".
+         htmlspecialchars(utf8_decode($movie->ItemAttributes->Title))."</a><br>"); 
+
+
+//Publisher, Publication Date
+
+   if ($movie->ItemAttributes->Publisher){ 
+       echo ("<br>Publisher: ".htmlspecialchars(utf8_decode($movie->ItemAttributes->Publisher)));
+   }   else {}  
+   if ($movie->ItemAttributes->PublicationDate){ 
+       echo ("<br>publication date: ".htmlspecialchars(utf8_decode($movie->ItemAttributes->PublicationDate)));
+   }   else {}
+
+
+//Prices      
+
+   if ($movie->OfferSummary->LowestNewPrice->FormattedPrice){ 
+       echo ("<br>Price: ".htmlspecialchars($movie->OfferSummary->LowestNewPrice->FormattedPrice));
+   }   else { echo '<br>Price: not available';
+   }	
+  
+// hyperlink to detailed page 
+
+   echo ("<br><br>\n\t<a href=\"".$movie->DetailPageURL."\" ".$tabla." class=\"braungold\">more details</a><br>"); 
+   echo "\n\t</td></tr>\n\n";	
+
+  }
+
+    print "\t<tr><td align=\" style=\""."\" colspan=\"2\">\n\n";  
+		
+
+//Analysis of Response
+
+foreach ($response->Items->Request as $foundresult) {	
+
+    echo ("Page ".$foundresult->ItemSearchRequest->ItemPage);
+    
+}  	
+
+foreach ($response->Items as $Results) {
+	
+echo ("<br> Total Results: ".$Results->TotalResults);
+echo (" on ".$Results->TotalPages. " Pages");	
+
+}
+
+//start of formular below
+
+?>
+
+<?php
+
+	print "\t</td></tr>\n\t<tr><td style=\"padding-top: 10px; padding-bottom: 10px\" colspan=\"2\">\n";
+	print "\t<table border=\"0\" width=\"100%\"><tr><td width=\"33%\" align=\"left\" style=\"padding-left: 20px\">\n";
+
+
+//link to next and previous page (htmlspecialchars to validate the document -> & is changed into &amp)
+
+$TotalPages  =  ($Results->TotalPages);
+$SearchIndex =  ($foundresult->ItemSearchRequest->SearchIndex);
+$Keywords    =  ($foundresult->ItemSearchRequest->Keywords);
+$ItemPage    =  ($foundresult->ItemSearchRequest->ItemPage);	
+$Keywords    =  preg_replace("/[ ]/", "+", $Keywords);
+     
+
+  if ($TotalPages > 1) {
+
+        if ($ItemPage > 1) {
+
+            echo "\t<a class=\"braungold\" href=\"".htmlspecialchars("?".
+                 "SearchIndex"."=". $SearchIndex ."&".
+                 "Keywords"   ."=". $Keywords    ."&".
+                 "ItemPage"   ."=".($ItemPage -1)).
+                 "\">« back </a>\n";
+
+        }  else {echo "\t<span class=\"zueinsam\">« back</span></td>\n";}  
+        }
+
+	
+     if ($TotalPages > 1) {
+
+        if ($ItemPage*1 <= $TotalPages) {
+
+            echo "\t<a class=\"braungold\" href=\"".htmlspecialchars("?".
+                  "SearchIndex"."=". $SearchIndex ."&".
+                  "Keywords"   ."=". $Keywords    ."&".
+                  "ItemPage"   ."=".($ItemPage +1)).
+                  "\">next page »</a>\n";
+
+        }  else {echo "*\n";}
+        }	
+  
+
+   	print "\t</td></tr></table>\n\n</td></tr></table>\n";
+
+?>  
+
+</body>
+</html>
