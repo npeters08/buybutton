@@ -1,0 +1,30 @@
+<?php 
+
+include 'http://buybutton.square7.ch/util.php';
+
+// Set the character encoding to UTF-8
+header('Content-Type: text/html; charset=utf-8');
+
+$artistName = 'Coldplay';
+$applicationID = 'ae5586c0';
+$applicationKey = '73c2f7e3007bfe90bf3e9481d50fd8df';
+
+// Set the request URL
+$url = 'http://api.decibel.net/v1/Albums/?artist=' . urlencode($artistName) . '&format=xml';
+
+// Issue the request to the Decibel Web Service
+$response = request($url, $applicationID, $applicationKey);
+
+echo $response;
+
+// Interpret the XML response
+$xml = simplexml_load_string($response);
+
+// Get the collection of albums from the result set
+$albums = $xml->ResultSet->Album;
+
+// Output the search results
+foreach ($albums as $album) {
+    echo $album->Name . ' - ' . $album->Artists . '<br/>';
+}
+ ?>
